@@ -46,7 +46,9 @@ func (u Universe) Next() Universe {
 			neighborCellsCount += cellByCoordinate[coordinateStr]
 		}
 
-		if neighborCellsCount == 2 || neighborCellsCount == 3 {
+		coordinateStr := fmt.Sprintf("%d,%d", coordinate[0], coordinate[1])
+		if (cellByCoordinate[coordinateStr] == 1 && (neighborCellsCount == 2 || neighborCellsCount == 3)) ||
+			(cellByCoordinate[coordinateStr] == 0 && neighborCellsCount == 3) {
 			newCellCoordinates = append(newCellCoordinates, coordinate)
 		}
 	}
@@ -74,13 +76,13 @@ func NewUniverse(positions [][]int) Universe {
 
 func NeighborsOf(coordinate []int) [][]int {
 	return [][]int{
-		{coordinate[0], coordinate[0] + 1},
-		{coordinate[0] + 1, coordinate[0] + 1},
-		{coordinate[0] + 1, coordinate[0]},
-		{coordinate[0] + 1, coordinate[0] - 1},
-		{coordinate[0], coordinate[0] - 1},
-		{coordinate[0] - 1, coordinate[0] - 1},
-		{coordinate[0] - 1, coordinate[0]},
-		{coordinate[0] - 1, coordinate[0] + 1},
+		{coordinate[0], coordinate[1] + 1},
+		{coordinate[0] + 1, coordinate[1] + 1},
+		{coordinate[0] + 1, coordinate[1]},
+		{coordinate[0] + 1, coordinate[1] - 1},
+		{coordinate[0], coordinate[1] - 1},
+		{coordinate[0] - 1, coordinate[1] - 1},
+		{coordinate[0] - 1, coordinate[1]},
+		{coordinate[0] - 1, coordinate[1] + 1},
 	}
 }
