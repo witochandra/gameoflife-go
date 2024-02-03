@@ -25,26 +25,31 @@ func (u Universe) Next() Universe {
 	coordinatesToCheckUniq := make(map[string]bool)
 	coordinatesToCheck := make([][]int, 0)
 	for _, pos := range u.cellPositions {
-		newCoordinates := [][]int{
-			pos,
-			{pos[0], pos[0] + 1},
-			{pos[0] + 1, pos[0] + 1},
-			{pos[0] + 1, pos[0]},
-			{pos[0] + 1, pos[0] - 1},
-			{pos[0], pos[0] - 1},
-			{pos[0] - 1, pos[0] - 1},
-			{pos[0] - 1, pos[0]},
-			{pos[0] - 1, pos[0] + 1},
-		}
+		newCoordinates := append([][]int{pos}, NeighborsOf(pos)...)
 
-		for _, nCoordinate := range neighborCoordinates {
-			neighborsCount += cellByCoordinate[fmt.Sprintf("%d,%d", nCoordinate[0], nCoordinate[1])]
-		}
-		if neighborsCount == 3 {
-
+		for _, nCoordinate := range newCoordinates {
+			coordinateStr := fmt.Sprintf("%d,%d", nCoordinate[0], nCoordinate[1])
+			if coordinatesToCheckUniq[coordinateStr] {
+				continue
+			}
+			coordinatesToCheckUniq[coordinateStr] = true
+			coordinatesToCheck = append(coordinatesToCheck, nCoordinate)
 		}
 	}
 	newCellCoordinates := make([][]int, 0)
+	for _, coordinate := range coordinatesToCheck {
+		neighbors := NeighborsOf(coordinate)
+
+		neighborCellsCount := 0
+		for _, nCoordinate := range neighbors {
+			coordinateStr := fmt.Sprintf("%d,%d", nCoordinate[0], nCoordinate[1])
+			neighborCellsCount += cellByCoordinate[coordinateStr]
+		}
+
+		if neighborCellsCount == 2 || neighborCellsCount == 3 {
+			newCellCoordinates = append(newCellCoordinates, coordinate)
+		}
+	}
 
 	return NewUniverse(newCellCoordinates)
 }
@@ -64,5 +69,18 @@ func NewUniverse(positions [][]int) Universe {
 
 	return Universe{
 		cellPositions: cellPositions,
+	}
+}
+
+func NeighborsOf(coordinate []int) [][]int {
+	return [][]int{
+		{coordinate[0], coordinate[0] + 1},
+		{coordinate[0] + 1, coordinate[0] + 1},
+		{coordinate[0] + 1, coordinate[0]},
+		{coordinate[0] + 1, coordinate[0] - 1},
+		{coordinate[0], coordinate[0] - 1},
+		{coordinate[0] - 1, coordinate[0] - 1},
+		{coordinate[0] - 1, coordinate[0]},
+		{coordinate[0] - 1, coordinate[0] + 1},
 	}
 }

@@ -23,3 +23,17 @@ func TestNewUniverse(t *testing.T) {
 	})
 	assert.Equal(t, len(u.CellPositions()), 2)
 }
+
+func TestNeighborsOf(t *testing.T) {
+	neighbors := NeighborsOf([]int{0, 0})
+	assert.ElementsMatch(t, [][]int{
+		{0, 1},
+		{1, 1},
+		{1, 0},
+		{1, -1},
+		{0, -1},
+		{-1, -1},
+		{-1, 0},
+		{-1, 1},
+	}, neighbors)
+}
