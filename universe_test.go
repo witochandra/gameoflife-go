@@ -1,15 +1,25 @@
 package gameoflife
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestNewUniverse(t *testing.T) {
-	positions := [][]int{
+	u := NewUniverse([][]int{})
+	assert.Equal(t, len(u.CellPositions()), 0)
+
+	u = NewUniverse([][]int{
 		{1, 2},
 		{1, 2},
 		{2, 3},
-	}
-	u := NewUniverse(positions)
-	if len(u.CellPositions()) != 2 {
-		t.Errorf("Expected 2 cells, got %d", len(u.CellPositions()))
-	}
+	})
+	assert.Equal(t, len(u.CellPositions()), 2)
+
+	u = NewUniverse([][]int{
+		{1, 2},
+		{2, 3},
+	})
+	assert.Equal(t, len(u.CellPositions()), 2)
 }
