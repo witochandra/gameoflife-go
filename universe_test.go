@@ -53,23 +53,22 @@ func TestUniverse_Next(t *testing.T) {
 		assert.Empty(t, u.Next().CellPositions())
 	})
 
-	t.Run("Any live cell with two or three live neighbors lives on to the next generation.", func(t *testing.T) {
+	t.Run("Any live cell with more than three live neighbors dies, as if by overpopulation.", func(t *testing.T) {
+		/*
+			x x      x
+			xx   ->  x
+			 xx      xxx
+		*/
 		u := NewUniverse([][]int{
-			{0, 0}, {0, 1}, {1, 1},
+			{0, 0}, {2, 0},
+			{0, -1}, {1, -1},
+			{1, -2}, {2, -2},
 		})
 		assert.ElementsMatch(t,
 			[][]int{
-				{0, 0}, {0, 1}, {1, 1},
-			},
-			u.Next().CellPositions(),
-		)
-
-		u = NewUniverse([][]int{
-			{0, 0}, {0, 1}, {1, 1}, {1, 0},
-		})
-		assert.ElementsMatch(t,
-			[][]int{
-				{0, 0}, {0, 1}, {1, 1}, {1, 0},
+				{0, 0},
+				{0, -1},
+				{0, -2}, {1, -2}, {2, -2},
 			},
 			u.Next().CellPositions(),
 		)
