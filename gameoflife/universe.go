@@ -1,12 +1,10 @@
 package gameoflife
 
-import "fmt"
-
 type Universe struct {
-	cellPositions [][]int
+	cellPositions []Point
 }
 
-func (u Universe) CellPositions() [][]int {
+func (u Universe) CellPositions() []Point {
 	return u.cellPositions
 }
 
@@ -19,36 +17,32 @@ Any dead cell with exactly three live neighbors becomes a live cell, as if by re
 func (u Universe) Next() Universe {
 	cellByCoordinate := make(map[string]int)
 	for _, pos := range u.cellPositions {
-		coordinateStr := fmt.Sprintf("%d,%d", pos[0], pos[1])
-		cellByCoordinate[coordinateStr] = 1
+		cellByCoordinate[pos.String()] = 1
 	}
 	coordinatesToCheckUniq := make(map[string]bool)
-	coordinatesToCheck := make([][]int, 0)
+	coordinatesToCheck := make([]Point, 0)
 	for _, pos := range u.cellPositions {
-		newCoordinates := append([][]int{pos}, NeighborsOf(pos)...)
+		newCoordinates := append([]Point{pos}, pos.Neighbors()...)
 
 		for _, nCoordinate := range newCoordinates {
-			coordinateStr := fmt.Sprintf("%d,%d", nCoordinate[0], nCoordinate[1])
-			if coordinatesToCheckUniq[coordinateStr] {
+			if coordinatesToCheckUniq[nCoordinate.String()] {
 				continue
 			}
-			coordinatesToCheckUniq[coordinateStr] = true
+			coordinatesToCheckUniq[nCoordinate.String()] = true
 			coordinatesToCheck = append(coordinatesToCheck, nCoordinate)
 		}
 	}
-	newCellCoordinates := make([][]int, 0)
+	newCellCoordinates := make([]Point, 0)
 	for _, coordinate := range coordinatesToCheck {
-		neighbors := NeighborsOf(coordinate)
+		neighbors := coordinate.Neighbors()
 
 		neighborCellsCount := 0
 		for _, nCoordinate := range neighbors {
-			coordinateStr := fmt.Sprintf("%d,%d", nCoordinate[0], nCoordinate[1])
-			neighborCellsCount += cellByCoordinate[coordinateStr]
+			neighborCellsCount += cellByCoordinate[nCoordinate.String()]
 		}
 
-		coordinateStr := fmt.Sprintf("%d,%d", coordinate[0], coordinate[1])
-		if (cellByCoordinate[coordinateStr] == 1 && (neighborCellsCount == 2 || neighborCellsCount == 3)) ||
-			(cellByCoordinate[coordinateStr] == 0 && neighborCellsCount == 3) {
+		if (cellByCoordinate[coordinate.String()] == 1 && (neighborCellsCount == 2 || neighborCellsCount == 3)) ||
+			(cellByCoordinate[coordinate.String()] == 0 && neighborCellsCount == 3) {
 			newCellCoordinates = append(newCellCoordinates, coordinate)
 		}
 	}
@@ -56,33 +50,19 @@ func (u Universe) Next() Universe {
 	return NewUniverse(newCellCoordinates)
 }
 
-func NewUniverse(positions [][]int) Universe {
+func NewUniverse(positions []Point) Universe {
 	// removes duplicate cells in the input
 	cellPositionsUniq := make(map[string]bool)
-	cellPositions := make([][]int, 0)
+	cellPositions := make([]Point, 0)
 	for _, pos := range positions {
-		coordinateStr := fmt.Sprintf("%d,%d", pos[0], pos[1])
-		if _, ok := cellPositionsUniq[coordinateStr]; ok {
+		if _, ok := cellPositionsUniq[pos.String()]; ok {
 			continue
 		}
-		cellPositionsUniq[coordinateStr] = true
+		cellPositionsUniq[pos.String()] = true
 		cellPositions = append(cellPositions, pos)
 	}
 
 	return Universe{
 		cellPositions: cellPositions,
-	}
-}
-
-func NeighborsOf(coordinate []int) [][]int {
-	return [][]int{
-		{coordinate[0], coordinate[1] + 1},
-		{coordinate[0] + 1, coordinate[1] + 1},
-		{coordinate[0] + 1, coordinate[1]},
-		{coordinate[0] + 1, coordinate[1] - 1},
-		{coordinate[0], coordinate[1] - 1},
-		{coordinate[0] - 1, coordinate[1] - 1},
-		{coordinate[0] - 1, coordinate[1]},
-		{coordinate[0] - 1, coordinate[1] + 1},
 	}
 }
