@@ -1,5 +1,7 @@
 package gameoflife
 
+import "fmt"
+
 type Point struct {
 	X, Y int
 }
@@ -15,4 +17,8 @@ func (p Point) Neighbors() []Point {
 		{p.X, p.Y + 1},     // top
 		{p.X + 1, p.Y + 1}, // top right
 	}
+}
+
+func (p Point) String() string {
+	return fmt.Sprintf("(%d, %d)", p.X, p.Y)
 }

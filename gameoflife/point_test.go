@@ -20,3 +20,9 @@ func TestPoint_Neighbors(t *testing.T) {
 		{1, 1},   // top right
 	}, neighbors)
 }
+
+func TestPoint_String(t *testing.T) {
+	assert.Equal(t, "(0, 0)", gameoflife.Point{0, 0}.String())
+
+	assert.Equal(t, "(-1, 1)", gameoflife.Point{-1, 1}.String())
+}
