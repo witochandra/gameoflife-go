@@ -7,17 +7,12 @@ Conway's Game of Life in Golang
 ```sh
 go mod tidy
 
-go run main.go
+go run main.go <input_path> <generation> <outputpath>
 
-# run with input file
-go run main.go \
-    -render=true \
-    -input=examples/input.txt
-
-# run without rendering & output the last state to a file
-go run main.go \
-    -render=false \
-    -input=examples/input.txt \
-    -output=output.txt \
-    -steps=10
+# Example
+go run main.go ./examples/oscillators/beacon_0.txt 10 ./output.txt
 ```
+
+## Integration tests
+
+`./integration_test.sh` contains a script to test the code with the examples in the `examples` folder.
