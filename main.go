@@ -1,64 +1,43 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 	"gameoflife/gameoflife"
 	"gameoflife/util"
-	"time"
-
-	"golang.org/x/term"
+	"log"
+	"os"
+	"strconv"
 )
 
-func renderCells(positions []gameoflife.Point, width, height int) {
-	cellByCoordinate := make(map[string]int)
-	for _, pos := range positions {
-		cellByCoordinate[pos.String()] = 1
+func args() (inputPath string, steps int, outputPath string, err error) {
+	inputPath = os.Args[1]
+	if len(inputPath) == 0 {
+		err = fmt.Errorf("input path is required")
+		return
 	}
-	buffer := ""
-	for y := 0; y < height-2; y++ {
-		for x := 0; x < width; x++ {
-			pos := gameoflife.Point{X: x, Y: y}
-			if cellByCoordinate[pos.String()] == 1 {
-				buffer += "O"
-			} else {
-				buffer += " "
-			}
+	stepsString := os.Args[2]
+	steps, e := strconv.Atoi(stepsString)
+	if e != nil {
+		err = fmt.Errorf("steps must be a positive integer")
+		return
+	}
+	outputPath = "./output.txt"
+	if len(os.Args) > 3 {
+		if len(os.Args[3]) > 0 {
+			outputPath = os.Args[3]
 		}
-		buffer += "\n"
 	}
-	fmt.Print(buffer)
+	return
 }
 
 func main() {
-	interval := 100 * time.Millisecond
-
-	inputPath := flag.String("input", "examples/input.txt", "Path to input file")
-	outputPath := flag.String("output", "", "Path to output file")
-	steps := flag.Int("steps", 2000000000, "Number of steps")
-	render := flag.Bool("render", true, "Render to terminal")
-
-	flag.Parse()
-
-	state := util.ReadStateFromFile(*inputPath)
-
-	counter := 0
-	for counter < *steps {
-		if *render {
-			width, height, err := term.GetSize(0)
-			if err != nil {
-				return
-			}
-			fmt.Print("\033[H\033[?25l") // move cursor to top left & hide cursor
-			fmt.Printf("W: %v, H: %v, Cycle No: %v\n", width, height, counter)
-			renderCells(state, width, height)
-			time.Sleep(interval)
-		}
-		counter++
-
-		state = gameoflife.Next(state)
+	inputPath, steps, outputPath, err := args()
+	if err != nil {
+		log.Fatal(err)
+		return
 	}
-	if *outputPath != "" {
-		util.WriteStateToFile(*outputPath, state)
-	}
+
+	state := util.ReadStateFromFile(inputPath)
+	newState := gameoflife.Next(state, steps)
+	util.WriteStateToFile(outputPath, newState)
 }
