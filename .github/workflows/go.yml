@@ -28,4 +28,4 @@ jobs:
       run: go test -v ./...
 
     - name: Integration Test
-      run: ./integration-test.sh
+      run: ./integration_test.sh
