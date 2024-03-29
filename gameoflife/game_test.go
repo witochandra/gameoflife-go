@@ -13,13 +13,13 @@ func TestNext(t *testing.T) {
 			{0, 0},
 		}
 
-		assert.Empty(t, gameoflife.Next(initialState))
+		assert.Empty(t, gameoflife.Next(initialState, 1))
 
 		initialState = []gameoflife.Point{
 			{0, 0}, {0, 1},
 		}
 
-		assert.Empty(t, gameoflife.Next(initialState))
+		assert.Empty(t, gameoflife.Next(initialState, 1))
 	})
 
 	t.Run("Any live cell with more than three live neighbors dies, as if by overpopulation.", func(t *testing.T) {
@@ -39,7 +39,7 @@ func TestNext(t *testing.T) {
 				{0, -1},
 				{0, -2}, {1, -2}, {2, -2},
 			},
-			gameoflife.Next(initialState),
+			gameoflife.Next(initialState, 1),
 		)
 	})
 }

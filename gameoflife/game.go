@@ -6,7 +6,10 @@ Any live cell with two or three live neighbors lives on to the next generation.
 Any live cell with more than three live neighbors dies, as if by overpopulation.
 Any dead cell with exactly three live neighbors becomes a live cell, as if by reproduction.
 */
-func Next(cellPositions []Point) []Point {
+func Next(cellPositions []Point, generation int) []Point {
+	if generation < 1 {
+		return cellPositions
+	}
 	cellByPoint := make(map[string]int)
 	for _, pos := range cellPositions {
 		cellByPoint[pos.String()] = 1
@@ -38,5 +41,5 @@ func Next(cellPositions []Point) []Point {
 			newCellPosition = append(newCellPosition, point)
 		}
 	}
-	return newCellPosition
+	return Next(newCellPosition, generation-1)
 }

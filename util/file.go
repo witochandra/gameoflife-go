@@ -7,6 +7,11 @@ import (
 	"os"
 )
 
+const (
+	DeadCell  = '_'
+	AliveCell = '#'
+)
+
 func ReadStateFromFile(path string) []gameoflife.Point {
 	file, err := os.Open(path)
 	if err != nil {
@@ -19,7 +24,7 @@ func ReadStateFromFile(path string) []gameoflife.Point {
 	y := 0
 	for scanner.Scan() {
 		for x, c := range scanner.Text() {
-			if c != ' ' {
+			if c == AliveCell {
 				cells = append(cells, gameoflife.Point{X: x, Y: y})
 			}
 		}
@@ -56,9 +61,9 @@ func WriteStateToFile(path string, positions []gameoflife.Point) {
 		for x := 0; x <= maxX; x++ {
 			pos := gameoflife.Point{X: x, Y: y}
 			if cellByCoordinate[pos.String()] == 1 {
-				buffer += "O"
+				buffer += string(AliveCell)
 			} else {
-				buffer += " "
+				buffer += string(DeadCell)
 			}
 		}
 		buffer += "\n"
