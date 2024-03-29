@@ -105,3 +105,68 @@ func TestPoints_String(t *testing.T) {
 		})
 	}
 }
+
+func TestNewPoints(t *testing.T) {
+	testCases := []struct {
+		name      string
+		input     string
+		cellPoint string
+		expected  gameoflife.Points
+	}{
+		{
+			name:      "Empty string",
+			input:     "",
+			cellPoint: "#",
+			expected:  gameoflife.Points{},
+		},
+		{
+			name:      "Single point",
+			input:     "#",
+			cellPoint: "#",
+			expected:  gameoflife.Points{{X: 0, Y: 0}},
+		},
+		{
+			name: "Multiple points",
+			input: strings.Join([]string{
+				"##",
+				"#_",
+			}, "\n"),
+			cellPoint: "#",
+			expected: gameoflife.Points{
+				{X: 0, Y: 0},
+				{X: 1, Y: 0},
+				{X: 0, Y: 1},
+			},
+		},
+		{
+			name: "Multiple points with offset",
+			input: strings.Join([]string{
+				"______",
+				"______",
+				"__##__",
+				"__#___",
+				"______",
+				"______",
+			}, "\n"),
+			cellPoint: "#",
+			expected: gameoflife.Points{
+				{X: 2, Y: 2},
+				{X: 3, Y: 2},
+				{X: 2, Y: 3},
+			},
+		},
+	}
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			actual := gameoflife.NewPoints(tc.input, tc.cellPoint)
+			if len(tc.expected) != len(actual) {
+				t.Errorf("Expected %v, got %v", tc.expected, actual)
+			}
+			for i := range tc.expected {
+				if tc.expected[i] != actual[i] {
+					t.Errorf("Expected %v, got %v", tc.expected, actual)
+				}
+			}
+		})
+	}
+}

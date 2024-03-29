@@ -73,3 +73,16 @@ func (ps Points) String(offset int, emptyPoint, cellPoint string) string {
 
 	return strings.Join(lines, "\n") + "\n"
 }
+
+func NewPoints(string, cellPoint string) Points {
+	lines := strings.Split(string, "\n")
+	points := make(Points, 0)
+	for y, line := range lines {
+		for x, c := range line {
+			if c == rune(cellPoint[0]) {
+				points = append(points, Point{X: x, Y: y})
+			}
+		}
+	}
+	return points
+}
